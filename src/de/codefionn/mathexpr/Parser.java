@@ -78,9 +78,7 @@ public class Parser {
 	Token CurTok = Token.EOF;
 
 	private Token getNextToken() {
-		CurTok = gettok();
-		System.out.println(CurTok.name());
-		return CurTok;
+		return CurTok = gettok();
 	}
 
 	private Term logError(String msg) {
@@ -127,7 +125,19 @@ public class Parser {
 			return parseNumberExpr();
 		else if (CurTok == Token.OPAREN)
 			return parseParenExpr();
-		else
+		else if (CurTok == Token.SUB) {
+			getNextToken(); // eat '-'
+			Term t = parsePrimary();
+			if (t == null)
+				return null;
+			return new Negation(t);
+		} else if (CurTok == Token.ADD) {
+			getNextToken(); // eat '+'
+			Term t = parsePrimary();
+			if (t == null)
+				return null;
+			return t; // Nothing would change
+		} else
 			return logError("Expected primary expression");
 	}
 
